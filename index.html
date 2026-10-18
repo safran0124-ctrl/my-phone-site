@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>윤정한의 휴대폰</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#202024;color:white;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+.phone{max-width:430px;margin:auto;min-height:100dvh;background:#000;overflow:hidden}
+.status{height:29px;padding:6px 15px;display:flex;justify-content:space-between;background:#080808;font-size:12px}
+.hardware{height:22px;background:#080808;display:flex;justify-content:center;align-items:center}
+.speaker{width:75px;height:6px;border-radius:8px;background:#303035}
+.screen{height:calc(100dvh - 95px);min-height:570px;overflow:auto;background:#000;position:relative}
+.home{min-height:100%;padding:20px 15px 16px;display:flex;flex-direction:column;background:linear-gradient(150deg,#7ddcf5,#1684e5 43%,#06459b 80%,#08172e)}
+.clock{font-size:55px;font-weight:200;text-align:center;margin:10px 0 2px}
+.date{text-align:center;font-size:14px;margin-bottom:25px}
+.notice{padding:12px;background:#163a64d9;border:1px solid #ffffff55;border-radius:11px;margin-bottom:25px;font-size:13px;line-height:1.5;cursor:pointer}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px 4px}
+.app{border:0;background:none;color:white;font-size:11px;display:flex;align-items:center;flex-direction:column;gap:6px;padding:0}
+.ico{width:56px;height:56px;border-radius:13px;display:grid;place-items:center;font-size:29px;background:linear-gradient(#ffffff80,transparent 50%),var(--c);border:1px solid #ffffff88;box-shadow:inset 0 -4px 6px #0003,0 3px 5px #0005}
+.dock{margin-top:auto;padding:15px 0 0;display:grid;grid-template-columns:repeat(4,1fr);background:#003d8a55;border-radius:12px}
+.bottom{height:44px;background:linear-gradient(#292a2e,#111);display:flex;align-items:center;justify-content:space-around;border-top:1px solid #444}
+.homekey{width:72px;height:26px;border:2px solid #666;border-radius:9px;background:transparent}
+.head{height:49px;padding:0 12px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#414247,#1a1a1e);border-bottom:1px solid #555;position:sticky;top:0;z-index:3;font-weight:600}
+.head button{border:0;background:none;color:#72baff;font-size:14px}
+.item{padding:12px;border-bottom:1px solid #292929;display:flex;align-items:center;gap:11px;cursor:pointer;min-height:65px}
+.mini{width:43px;height:43px;border-radius:10px;display:grid;place-items:center;font-size:22px;background:linear-gradient(#ffffff55,transparent),var(--c);flex-shrink:0}
+.sub{font-size:12px;color:#aaa;line-height:1.5;margin-top:4px}
+.main{min-width:0;flex:1}
+.badge{background:#e94b43;color:white;border-radius:14px;min-width:21px;text-align:center;padding:2px 6px;font-size:11px}
+.thread{display:flex;flex-direction:column;min-height:100%;background:#000}
+.contactbar{text-align:center;color:#999;font-size:12px;padding:9px;border-bottom:1px solid #222}
+.bubbles{padding:12px 10px 18px;display:flex;flex-direction:column;gap:9px;flex:1}
+.bubble{max-width:88%;padding:10px 12px;font-size:14px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.incoming{align-self:flex-start;background:#303034;border-radius:16px 16px 16px 5px}
+.outgoing{align-self:flex-end;background:#258b39;border-radius:16px 16px 5px 16px}
+.stamp{text-align:center;font-size:10px;color:#777;margin:10px 0 3px}
+.compose{position:sticky;bottom:0;display:flex;gap:7px;align-items:center;padding:10px;background:#151517;border-top:1px solid #292929}
+.compose input{flex:1;min-width:0;border:1px solid #4a4a4f;border-radius:20px;padding:12px;background:#080808;color:white;font-size:14px}
+.blue{background:linear-gradient(#5cbaff,#0875ce);border:0;color:white;border-radius:9px;padding:12px}
+.note{margin:12px;background:#fff09c;color:#40391e;padding:13px;border-radius:4px;line-height:1.65}
+.note textarea{width:100%;height:130px;background:transparent;border:0;color:#40391e;font:inherit;resize:vertical}
+.photos{display:grid;grid-template-columns:repeat(2,1fr);gap:3px;padding:4px}
+.photo{aspect-ratio:1;background:linear-gradient(145deg,#426777,#10151e);padding:10px;display:flex;align-items:end;font-size:12px;cursor:pointer}
+.news{background:#f3f3f3;color:#161616;padding:13px;line-height:1.6;min-height:100%}
+.news article{padding:13px;background:white;border-bottom:1px solid #ddd;cursor:pointer}
+.center{text-align:center;padding:50px 18px}
+.callbtn{background:#df3933;border:0;border-radius:50%;width:60px;height:60px;color:white;font-size:23px}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="status"><span id="statusTime">오후 11:49</span><span>▮▮▮ 3G ▣ 23%</span></div>
+<div class="hardware"><div class="speaker"></div></div>
+<div id="screen" class="screen"></div>
+<div class="bottom"><span>▤</span><button class="homekey" onclick="home()"> </button><span onclick="back()">↶</span></div>
+</div>
+
+<script>
+const people=[
+['홍지수','연인 · 네트워크 수산','010-0000-0101'],
+['문준휘','네트워크 수산 직원','010-0000-0102'],
+['서명호','네트워크 수산 직원','010-0000-0103'],
+['최한솔','네트워크 수산 직원','010-0000-0104'],
+['최승철','경찰서장','010-0000-0202'],
+['전원우','수사과','010-0000-0203'],
+['권순영','형사과','010-0000-0204'],
+['이지훈','형사과','010-0000-0205'],
+['김민규','수사과','010-0000-0206'],
+['이석민','형사과','010-0000-0207'],
+['부승관','형사과','010-0000-0208'],
+['이찬','수사과','010-0000-0209'],
+['알 수 없는 번호','발신자 정보 없음','010-0000-0999']
+];
+
+// 윤정한의 휴대폰
+// in = 상대방이 윤정한에게 보낸 문자(왼쪽 회색)
+// out = 윤정한이 상대방에게 보낸 문자(오른쪽 초록색)
+const threads={
+'홍지수':[
+['stamp','4월 3일 오후 8:16'],
+['in','내일 몇 시에 올 거야? 꽃집 예약해 놨어.'],
+['out','잠복 끝나고 연락할게. 늦어도 갈 거야.'],
+['in','알겠어. 근데 오늘따라 이상하게 불안하네. 조심해.'],
+['out','걱정하지 마. 끝나면 바로 전화할게. 사랑해.'],
+['stamp','오후 11:42'],
+['in','정한아, 잠복 끝났어?'],
+['in','전화 왜 안 받아? 아직 현장이야?'],
+['in','정한아? 메시지 보면 답장해 줘.'],
+['stamp','읽지 않은 메시지'],
+['in','경찰서에 전화했는데 아직 아무도 정확히 모르겠대.'],
+['in','나 지금 너무 불안해. 어디 있는 거야?'],
+['in','정한아, 제발 무사하다고 한마디만 해 줘.'],
+['in','나 경찰서 앞이야. 네 동료들이랑 같이 기다릴게.'],
+['in','우리 내일 꽃 사러 가기로 했잖아. 약속했잖아.'],
+['in','전화 한 번만 받아 줘. 제발.']
+],
+'최승철':[
+['stamp','오후 11:51'],
+['in','윤정한, 응답 바람. 잠복 상황 보고해.'],
+['in','윤정한 형사 연락 두절. 전원 마지막 위치 확인 및 수색 준비.'],
+['in','혼자 움직이지 마. 전원 팀 단위로 행동한다.'],
+['in','정한아, 이 메시지 보면 바로 답해. 지금 다들 널 찾고 있다.'],
+['in','홍지수 씨도 경찰서에 와 있다. 무사하면 꼭 연락해.']
+],
+'전원우':[
+['stamp','오후 11:39'],
+['in','정한아, 네 마지막 휴대폰 신호 23:17에 끊겼어.'],
+['in','항구 창고 CCTV도 비슷한 시간에 끊겼어.'],
+['in','기록이 이상해. 일부러 지운 흔적일 수도 있어.'],
+['in','위치 하나라도 보내 줘. 지금 전부 확인하고 있어.'],
+['in','지수 씨가 계속 전화해. 나도 무슨 말을 해야 할지 모르겠다.']
+],
+'권순영':[
+['in','야 정한아, 장난 아니지? 전화 받아 봐.'],
+['in','너 이렇게 연락 끊는 사람 아니잖아. 무슨 일 있어?'],
+['in','지수 씨가 경찰서에 와서 기다리고 있어. 얼굴이 너무 안 좋아.'],
+['in','제발 무사하다고 답장 좀 해.']
+],
+'이지훈':[
+['in','윤정한 형사님, 마지막 잠복 장소 확인 중입니다.'],
+['in','현장 주변에서 수상한 흔적이 나왔습니다.'],
+['in','선배님, 메시지 확인하시면 바로 응답 부탁드립니다.'],
+['in','홍지수 씨도 계속 기다리고 있습니다. 꼭 돌아오십시오.']
+],
+'김민규':[
+['in','형, 항구 쪽 차량 기록 확인 중이야.'],
+['in','마지막 이동 경로가 좀 이상해. 누가 따라붙은 것 같아.'],
+['in','형, 나 민규야. 이거 보면 전화 좀 해. 다들 걱정하고 있어.']
+],
+'이석민':[
+['in','정한아, 나야. 전화 좀 받아 봐.'],
+['in','승철이 형이 전원 수색하라고 했어. 우리 다 나왔어.'],
+['in','지수 씨가 계속 너한테 무슨 일 생긴 거 아니냐고 물어봐.'],
+['in','아무 일 없다고 말해 줘. 부탁이야.']
+],
+'부승관':[
+['in','형, 어디예요? 다들 형 찾고 있어요.'],
+['in','지수 씨가 경찰서에서 안 가고 기다려요.'],
+['in','형, 제발 답장 좀 해요. 이런 식으로 걱정시키지 말고요.'],
+['in','무사하면 점 하나라도 보내 줘요. 제발.']
+],
+'이찬':[
+['in','현장 주변 수색 중입니다. 아직 발견하지 못했습니다.'],
+['in','형사님 휴대폰 신호가 완전히 끊겼습니다.'],
+['in','선배님, 꼭 돌아오셔야 합니다. 모두 기다리고 있습니다.']
+],
+'문준휘':[
+['in','지수 형이 오늘 가게 문도 안 열었어. 정한 씨 때문인가 봐.'],
+['in','항구 근처에서 낯익은 차를 봤어. 확실하진 않아.'],
+['in','혹시 도움이 될까 해서 알려 둬. 확인해 볼게.']
+],
+'서명호':[
+['in','정한 씨 잠복하러 간 날, 가게 앞에 모르는 사람이 왔어.'],
+['in','누구 찾냐고 물었더니 대답 없이 돌아갔어.'],
+['in','이게 관련 있을지도 모르니까 기억나는 거 더 찾아볼게.']
+],
+'최한솔':[
+['in','형, 정한 씨 아직 연락 없어요?'],
+['in','지수 형이 계속 전화하고 있어요. 걱정돼요.'],
+['in','제가 아는 거 있으면 바로 말할게요. 꼭 찾아요.']
+],
+'알 수 없는 번호':[
+['stamp','오후 11:58'],
+['in','네 동료들이 널 찾고 있더라.'],
+['in','항구 창고 사진을 확인해 봐.'],
+['in','이번 일에서 손 떼는 게 좋을 거야.']
+]
+};
+
+let page='home',active='홍지수',unread=8,notificationIndex=0;
+const $=id=>document.getElementById(id);
+
+function esc(s){
+return String(s).replace(/[&<>"']/g,c=>({
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
+}
+
+function header(t){
+return `<div class="head"><button onclick="back()">‹ 뒤로</button><span>${esc(t)}</span><span>⋯</span></div>`;
+}
+
+function app(t,icon,color,id){
+return `<button class="app" onclick="openApp('${id}')"><span class="ico" style="--c:${color}">${icon}</span>${t}</button>`;
+}
+
+function home(){
+page='home';
+$('screen').innerHTML=`
+<div class="home">
+<div class="clock" id="clock">23:49</div>
+<div class="date">4월 3일 화요일</div>
+<div class="notice" onclick="openApp('messages')">
+✉ 새 메시지 <b id="badge">${unread}</b>개<br>
+<span id="noticeText">홍지수: 정한아, 제발 무사하다고 한마디만 해 줘.</span>
+</div>
+<div class="apps">
+${app('인터넷','🌐','#1684df','news')}
+${app('달력','📅','#e8d9ad','calendar')}
+${app('메모','▤','#efcf28','notes')}
+${app('시계','◷','#888','clock')}
+${app('갤러리','▧','#ef9d27','gallery')}
+${app('음악','♫','#922ed1','music')}
+${app('녹음','●','#78433e','record')}
+${app('연락처','♟','#e77e27','contacts')}
+</div>
+<div class="dock">
+${app('전화','☎','#4ab53e','phone')}
+${app('연락처','♟','#e77e27','contacts')}
+${app('메시지','✉','#e9b52a','messages')}
+${app('뉴스','🌐','#1684df','news')}
+</div>
+</div>`;
+}
+
+function openApp(id){
+page=id;
+let title={
+contacts:'연락처',phone:'전화',messages:'메시지',
+gallery:'갤러리',notes:'메모',music:'음악',
+record:'음성 녹음',news:'인터넷',
+calendar:'달력',clock:'시계'
+}[id]||id;
+let h=header(title);
+
+if(id==='messages'){
+h+=Object.keys(threads).map(n=>{
+let last=[...(threads[n]||[])].reverse().find(x=>x[0]!=='stamp');
+return `<div class="item" onclick="chat('${n}')">
+<div class="mini" style="--c:#d5a72b">✉</div>
+<div class="main">${esc(n)}<div class="sub">${esc(last?last[1]:'')}</div></div>
+${n==='홍지수'?'<span class="badge">8</span>':'›'}
+</div>`;
+}).join('');
+}
+
+if(id==='contacts'||id==='phone'){
+h+=people.map(p=>`
+<div class="item" onclick="${id==='phone'?`call('${p[0]}')`:`detail('${p[0]}')`}">
+<div class="mini" style="--c:#69717d">♟</div>
+<div>${esc(p[0])}<div class="sub">${p[2]} · ${esc(p[1])}</div></div>
+</div>`).join('');
+}
+
+if(id==='gallery'){
+h+=`<div class="photos">
+${[
+['홍지수와 정한','둘이 바닷가에서 찍은 사진'],
+['경찰서 단체 사진','승철과 형사과 동료들'],
+['항구 창고','마지막 잠복 장소'],
+['증거 사진 0305','출입 기록에 남은 차량']
+].map(p=>`<div class="photo" onclick="alert('${p[0]}\\n${p[1]}')">${p[0]}</div>`).join('')}
+</div>`;
+}
+
+if(id==='notes'){
+h+=`<div class="note"><b>내일 데이트</b><br>
+<textarea id="memo">- 꽃 선물할 거
+- 반지 선물할 거
+- 내일 데이트
+
+지수한테 늦지 말기.
+잠복 끝나면 꼭 연락하기.</textarea>
+<button class="blue" onclick="alert('메모 저장 완료')">저장</button></div>
+<div class="note">수사 메모<br>항구 창고 CCTV 23:17부터 끊김.<br>마지막 휴대폰 신호와 일치.</div>`;
+}
+
+if(id==='news'){
+h=`<div class="news">${header('인터넷')}<h2>누리 뉴스</h2>
+<article onclick="alert('형사과 소속 윤정한 형사가 야간 잠복 중 연락이 끊겼다. 마지막 신호는 항구 인근에서 확인됐다.')">
+<b>[속보] 경찰관 한 명 실종… 마지막 행적은 항구 인근</b><p>사회 · 11분 전</p></article>
+<article onclick="alert('현장 출입 기록 일부가 공식 장부와 일치하지 않는다.')">
+<b>살인 사건 현장서 발견된 출입 기록</b></article>
+<article onclick="alert('항구 창고 주변 CCTV에서 특정 시간대 영상이 확인되지 않는다.')">
+<b>항구 주변 CCTV, 특정 시간대 영상 사라져</b></article>
+</div>`;
+}
+
+if(id==='calendar'){
+h+=`<div class="item">2018년 4월 3일 화요일</div>
+<div class="item">내일 · 지수와 데이트<br><span class="sub">꽃집 예약 · 반지 보러 가기</span></div>
+<div class="item">오늘 밤 · 항구 잠복 근무</div>`;
+}
+
+if(id==='clock'){
+h+=`<div class="item">오전 6:30　알람 · 켜짐</div>
+<div class="item">오전 7:00　알람 · 켜짐</div>`;
+}
+
+if(id==='music'||id==='record'){
+h+=`<div class="item" onclick="track(0)">
+<div class="mini" style="--c:#8038a5">♫</div>
+<div>증인의 목소리<div class="sub">녹음 파일 · 탭하여 확인</div></div></div>
+<div class="item" onclick="track(1)">
+<div class="mini" style="--c:#8038a5">♫</div>
+<div>알 수 없는 바다 소리<div class="sub">녹음 파일 · 탭하여 확인</div></div></div>
+<div id="track" class="item">파일을 선택하세요.</div>`;
+}
+
+$('screen').innerHTML=h;
+}
+
+function chat(name){
+active=name;
+page='chat';
+let arr=threads[name]||[];
+$('screen').innerHTML=`
+<div class="thread">
+${header(name)}
+<div class="contactbar">문자 메시지 · ${people.find(p=>p[0]===name)?.[2]||''}</div>
+<div class="bubbles" id="bubbles">
+${arr.map(m=>m[0]==='stamp'
+?`<div class="stamp">${esc(m[1])}</div>`
+:`<div class="bubble ${m[0]==='out'?'outgoing':'incoming'}">${esc(m[1])}</div>`
+).join('')}
+</div>
+<form class="compose" onsubmit="send(event)">
+<input id="msg" placeholder="문자 메시지" autocomplete="off">
+<button class="blue">보내기</button>
+</form>
+</div>`;
+let b=$('bubbles');
+if(b)b.scrollTop=b.scrollHeight;
+}
+
+function send(e){
+e.preventDefault();
+let input=$('msg'),v=input.value.trim();
+if(!v)return;
+let b=$('bubbles');
+b.insertAdjacentHTML('beforeend',`<div class="bubble outgoing">${esc(v)}</div>`);
+input.value='';
+b.scrollTop=b.scrollHeight;
+if(active==='홍지수'){
+setTimeout(()=>{
+if(page==='chat'&&active==='홍지수')
+b.insertAdjacentHTML('beforeend','<div class="stamp">메시지가 아직 전달되지 않았습니다.</div>');
+},1300);
+}else if(active==='알 수 없는 번호'){
+setTimeout(()=>{
+if(page==='chat'&&active==='알 수 없는 번호')
+b.insertAdjacentHTML('beforeend','<div class="bubble incoming">답장을 보낼 줄은 몰랐네. 항구로 와.</div>');
+},1600);
+}
+}
+
+function detail(n){
+let p=people.find(x=>x[0]===n);
+page='detail';
+$('screen').innerHTML=header('연락처')+
+`<div class="center" style="font-size:26px">♟<p>${esc(p[0])}</p>
+<div class="sub">${p[2]}<br>${esc(p[1])}</div></div>
+<div class="item" onclick="call('${p[0]}')">☎ 전화 걸기</div>
+<div class="item" onclick="chat('${p[0]}')">✉ 메시지 보기</div>`;
+}
+
+function call(n){
+page='call';
+$('screen').innerHTML=header('전화')+
+`<div class="center"><div style="font-size:25px">${esc(n)}</div>
+<p class="sub">발신 중…</p>
+<button class="callbtn" onclick="alert('응답 없음');back()">☎</button>
+<p class="sub">통화 종료</p></div>`;
+}
+
+function track(i){
+$('track').textContent=i===0
+?'▶ 녹음 내용: “그 사람은 혼자가 아니었어요. 횟집 직원 중 한 명이…”'
+:'▶ 파도 소리와 금속문이 닫히는 소리. 멀리서 세 번의 발걸음이 들린다.';
+}
+
+function back(){home()}
+
+function updateTime(){
+let d=new Date();
+$('statusTime').textContent=d.toLocaleTimeString('ko-KR',{
+hour:'2-digit',minute:'2-digit',hour12:true
+});
+if($('clock'))$('clock').textContent=d.toLocaleTimeString('ko-KR',{
+hour:'2-digit',minute:'2-digit',hour12:false
+});
+}
+home();
+updateTime();
+setInterval(updateTime,30000);
+
+const alerts=[
+['홍지수','정한아, 제발 무사하다고 한마디만 해 줘.'],
+['최승철','윤정한 형사 응답 바람. 전원 수색 중이다.'],
+['전원우','마지막 신호가 끊긴 위치 확인했어.'],
+['부승관','형, 지수 씨가 경찰서에서 기다려요.'],
+['김민규','형, 전화 한 번만 받아 줘. 다들 걱정해.'],
+['이지훈','선배님, 무사하시면 답장 부탁드립니다.']
+];
+
+setInterval(()=>{
+if(page==='home'){
+$('badge').textContent=++unread;
+let a=alerts[notificationIndex++%alerts.length];
+$('noticeText').textContent=a[0]+': '+a[1];
+}
+},35000);
+</script>
+</body>
+</html>
